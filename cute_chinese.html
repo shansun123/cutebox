@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脑洞语文大师 - 二年级下册</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap');
+        
+        body {
+            font-family: 'Ma Shan Zheng', cursive;
+            background-color: #FFF5E6;
+            color: #5C3A21;
+        }
+        
+        .game-container {
+            background: url('https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_23-2148902771.jpg') no-repeat center center;
+            background-size: cover;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .question-box {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            border: 3px solid #FF9F43;
+        }
+        
+        .option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .correct {
+            background-color: #6BCB77 !important;
+            color: white !important;
+            animation: bounce 0.5s;
+        }
+        
+        .wrong {
+            background-color: #FF6B6B !important;
+            color: white !important;
+            animation: shake 0.5s;
+        }
+        
+        .title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #E0E0E0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #FF9F43, #FF6B6B);
+            transition: width 0.5s ease;
+        }
+        
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: fall 5s linear infinite;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .avatar:hover {
+            transform: scale(1.1);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+            background-color: #FF9F43;
+            color: white;
+        }
+        
+        .streak {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+        
+        .streak-fire {
+            color: #FF6B6B;
+            margin-right: 3px;
+            animation: flame 1s infinite alternate;
+        }
+        
+        @keyframes flame {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); }
+        }
+        
+        .powerup {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .level-up {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+            text-align: center;
+            animation: zoomIn 0.5s;
+        }
+        
+        @keyframes zoomIn {
+            from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .daily-reward {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+        
+        .reward-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 300px;
+        }
+        
+        .reward-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin: 15px 0;
+        }
+        
+        .reward-day {
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+        }
+        
+        .reward-day.active {
+            background-color: #FF9F43;
+            color: white;
+        }
+        
+        .reward-day.today {
+            border: 2px solid #6BCB77;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="game-container w-full max-w-md p-6 relative overflow-hidden">
+        <!-- 顶部信息栏 -->
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center">
+                <img id="avatar" src="https://img.icons8.com/color/96/000000/cute-monster.png" class="avatar mr-2" alt="小怪兽">
+                <div>
+                    <h1 class="title text-xl font-bold text-purple-600">脑洞语文大师</h1>
+                    <div class="flex items-center">
+                        <span id="level" class="text-sm">等级: 1</span>
+                        <span id="xp" class="text-sm ml-2">经验: 0/100</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <div class="streak" id="streak-container" style="display: none;">
+                    <i class="fas fa-fire streak-fire"></i>
+                    <span id="streak-count">0</span>
+                </div>
+                <div class="ml-4 flex items-center">
+                    <i class="fas fa-coins text-yellow-500 mr-1"></i>
+                    <span id="coins" class="font-bold">100</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 进度条 -->
+        <div class="progress-bar w-full mb-6">
+            <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+        </div>
+        
+        <!-- 问题区域 -->
+        <div id="question-container" class="question-box p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <span id="question-number" class="text-sm font-bold">问题 1/10</span>
+                <span id="timer" class="text-sm font-bold">⏱️ 30秒</span>
+            </div>
+            <h2 id="question" class="text-xl font-bold mb-4 text-center">加载中...</h2>
+            <div id="options" class="grid grid-cols-2 gap-4">
+                <!-- 选项将通过JavaScript动态生成 -->
+            </div>
+            <div class="flex justify-between items-center mt-4">
+                <button id="hint-btn" class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full flex items-center">
+                    <i class="fas fa-lightbulb mr-2"></i> 提示
+                </button>
+                <button id="skip-btn" class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full flex items-center">
+                    <i class="fas fa-forward mr-2"></i> 跳过
+                </button>
+            </div>
+            <div id="hint-text" class="hidden mt-2 text-sm text-gray-600"></div>
+        </div>
+        
+        <!-- 能量道具 -->
+        <div class="flex justify-around mb-4">
+            <button id="double-xp" class="powerup bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center text-sm" title="双倍经验(30秒)">
+                <i class="fas fa-bolt mr-1"></i> 双倍经验
+                <span id="double-xp-count" class="badge">1</span>
+            </button>
+            <button id="freeze-timer" class="powerup bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center text-sm" title="冻结时间(10秒)">
+                <i class="fas fa-snowflake mr-1"></i> 冻结时间
+                <span id="freeze-timer-count" class="badge">1</span>
+            </button>
+            <button id="remove-wrong" class="powerup bg-red-100 text-red-800 px-3 py-1 rounded-full flex items-center text-sm" title="移除错误答案">
+                <i class="fas fa-eraser mr-1"></i> 移除错误
+                <span id="remove-wrong-count" class="badge">1</span>
+            </button>
+        </div>
+        
+        <!-- 底部导航 -->
+        <div class="flex justify-around bg-yellow-100 bg-opacity-50 rounded-lg p-2" >
+            <span>Ivy，加油！！！</span>
+        </div>
+        
+        <!-- 装饰元素 -->
+        <div class="absolute -top-4 -right-4 w-24 h-24 bg-yellow-200 rounded-full opacity-20"></div>
+        <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-200 rounded-full opacity-20"></div>
+    </div>
+    
+    <!-- 提示模态框 -->
+    <div id="hint-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg max-w-sm w-full mx-4">
+            <h3 class="text-xl font-bold mb-4 text-purple-600">提示</h3>
+            <p id="hint-text" class="mb-4">提示内容加载中...</p>
+            <div class="flex justify-end">
+                <button id="close-hint" class="bg-purple-600 text-white px-4 py-2 rounded">知道了</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 结果模态框 -->
+    <div id="result-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg max-w-sm w-full mx-4 text-center">
+            <i id="result-icon" class="fas fa-check-circle text-5xl mb-4 text-green-500"></i>
+            <h3 id="result-title" class="text-xl font-bold mb-2">回答正确!</h3>
+            <div class="flex justify-center items-center mb-2">
+                <span class="mr-2">获得:</span>
+                <i class="fas fa-coins text-yellow-500 mr-1"></i>
+                <span id="coins-earned" class="font-bold mr-3">20</span>
+                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                <span id="xp-earned" class="font-bold">10</span>
+            </div>
+            <p id="result-text" class="mb-4">你太棒了!</p>
+            <button id="next-question" class="bg-purple-600 text-white px-6 py-2 rounded-full">下一题</button>
+        </div>
+    </div>
+    
+    <!-- 庆祝动画容器 -->
+    <div id="celebration-container" class="celebration hidden"></div>
+    
+    <!-- 升级提示 -->
+    <div id="level-up" class="level-up hidden">
+        <i class="fas fa-trophy text-5xl text-yellow-500 mb-2"></i>
+        <h3 class="text-xl font-bold mb-1">升级啦!</h3>
+        <p id="new-level" class="mb-2">你现在是等级 2!</p>
+        <p class="text-sm text-gray-600">获得新头像和奖励!</p>
+        <button id="close-level-up" class="bg-purple-600 text-white px-4 py-1 rounded-full mt-2">继续</button>
+    </div>
+    
+    <!-- 每日奖励 -->
+    <div id="daily-reward" class="daily-reward hidden">
+        <div class="reward-box">
+            <h3 class="text-xl font-bold mb-2">每日奖励</h3>
+            <p class="mb-2">连续登录可获得更多奖励!</p>
+            
+            <div class="reward-calendar">
+                <div class="reward-day">日</div>
+                <div class="reward-day">一</div>
+                <div class="reward-day">二</div>
+                <div class="reward-day">三</div>
+                <div class="reward-day">四</div>
+                <div class="reward-day">五</div>
+                <div class="reward-day">六</div>
+                
+                <div class="reward-day">10</div>
+                <div class="reward-day active">20</div>
+                <div class="reward-day active">30</div>
+                <div class="reward-day active">50</div>
+                <div class="reward-day today">100</div>
+                <div class="reward-day">150</div>
+                <div class="reward-day">200</div>
+            </div>
+            
+            <p class="my-3">今日奖励: <span class="font-bold text-yellow-500">100 金币</span></p>
+            <button id="claim-reward" class="bg-purple-600 text-white px-6 py-2 rounded-full">领取奖励</button>
+        </div>
+    </div>
+    
+    <script>
+        // 二年级下册语文课文题目
+        const questions = [
+            {
+                question: "《找春天》一文中，孩子们在哪里找到了春天？",
+                options: [
+                    "在田野里",
+                    "在小溪边",
+                    "在公园里",
+                    "在以上所有地方"
+                ],
+                correct: 3,
+                hint: "课文中提到孩子们在田野、小溪、公园等地方都发现了春天的迹象。"
+            },
+            {
+                question: "《雷锋叔叔，你在哪里》一文中，雷锋叔叔帮助了谁？",
+                options: [
+                    "迷路的孩子",
+                    "年迈的大娘",
+                    "受伤的战士",
+                    "以上都是"
+                ],
+                correct: 3,
+                hint: "课文中描述了雷锋叔叔帮助迷路的孩子、年迈的大娘等多种好人好事。"
+            },
+            {
+                question: "《邓小平爷爷植树》一文中，邓小平爷爷在哪里植树？",
+                options: [
+                    "天坛公园",
+                    "颐和园",
+                    "香山公园",
+                    "北海公园"
+                ],
+                correct: 0,
+                hint: "课文中明确提到邓小平爷爷在天坛公园植树。"
+            },
+            {
+                question: "《小蝌蚪找妈妈》一文中，小蝌蚪最后在哪里找到了妈妈？",
+                options: [
+                    "池塘里",
+                    "稻田里",
+                    "小溪里",
+                    "水沟里"
+                ],
+                correct: 0,
+                hint: "小蝌蚪最终在池塘里找到了青蛙妈妈。"
+            },
+            {
+                question: "《我是一只小虫子》一文中，小虫子觉得当一只小虫子怎么样？",
+                options: [
+                    "很糟糕",
+                    "还不错",
+                    "非常危险",
+                    "特别无聊"
+                ],
+                correct: 1,
+                hint: "虽然当小虫子有一些不便，但作者觉得当一只小虫子还不错。"
+            },
+            {
+                question: "《枫树上的喜鹊》一文中，喜鹊阿姨教小喜鹊什么？",
+                options: [
+                    "唱歌",
+                    "飞翔",
+                    "捉虫",
+                    "筑巢"
+                ],
+                correct: 0,
+                hint: "课文中提到喜鹊阿姨在教小喜鹊唱歌。"
+            },
+            {
+                question: "《沙滩上的童话》一文中，孩子们在沙滩上玩什么游戏？",
+                options: [
+                    "堆沙堡",
+                    "挖宝藏",
+                    "打仗游戏",
+                    "捉迷藏"
+                ],
+                correct: 2,
+                hint: "孩子们在沙滩上玩打仗的游戏，用沙子堆城堡、挖地道。"
+            },
+            {
+                question: "《小马过河》一文中，小马最后是怎么过河的？",
+                options: [
+                    "直接趟过去",
+                    "绕道而行",
+                    "等水退了再过",
+                    "找别的动物帮忙"
+                ],
+                correct: 0,
+                hint: "小马最后决定自己试一试，发现河水既不像老牛说的那么浅，也不像松鼠说的那么深。"
+            },
+            {
+                question: "《画杨桃》一文中，老师为什么让同学们坐到'我'的位置上看杨桃？",
+                options: [
+                    "因为'我'画得最好",
+                    "因为角度不同看到的形状不同",
+                    "因为'我'的位置最舒服",
+                    "因为老师想惩罚其他同学"
+                ],
+                correct: 1,
+                hint: "老师想让同学们明白，从不同角度看事物，形状会不一样。"
+            },
+            {
+                question: "《要是你在野外迷了路》一文中，哪种方法不能帮助辨别方向？",
+                options: [
+                    "看太阳",
+                    "看大树",
+                    "看积雪",
+                    "看北极星"
+                ],
+                correct: 1,
+                hint: "课文中提到了太阳、积雪、北极星可以帮助辨别方向，但没有提到大树。"
+            },
+            {
+                question: "《找春天》一文中，孩子们在田野里发现了什么春天的迹象？",
+                options: [
+                    " snow",
+                    "新长出的草",
+                    "落叶",
+                    "枯草"
+                ],
+                correct: 1,
+                hint: "孩子们在田野里发现了新长出的草，这是春天的迹象。"
+            },
+            {
+                question: "《雷锋叔叔，你在哪里》一文中，雷锋叔叔帮助迷路的孩子时做了什么？",
+                options: [
+                    "给钱",
+                    "送回家",
+                    "送食物",
+                    "讲故事"
+                ],
+                correct: 1,
+                hint: "雷锋叔叔主动送迷路的孩子回家。"
+            },
+            {
+                question: "《邓小平爷爷植树》一文中，邓小平爷爷为什么要植树？",
+                options: [
+                    "为了好看",
+                    "为了环保",
+                    "为了纪念",
+                    "为了遮阳"
+                ],
+                correct: 1,
+                hint: "邓小平爷爷植树是为了保护环境。"
+            },
+            {
+                question: "《小蝌蚪找妈妈》一文中，小蝌蚪最后变成了什么？",
+                options: [
+                    "青蛙",
+                    "鱼",
+                    "乌龟",
+                    "鸭子"
+                ],
+                correct: 0,
+                hint: "小蝌蚪最后变成了青蛙。"
+            },
+            {
+                question: "《我是一只小虫子》一文中，小虫子最害怕什么？",
+                options: [
+                    "下雨",
+                    "刮风",
+                    "打雷",
+                    "下雪"
+                ],
+                correct: 0,
+                hint: "小虫子最害怕下雨，因为会被淋湿。"
+            },
+            {
+                question: "《枫树上的喜鹊》一文中，喜鹊阿姨教小喜鹊什么歌？",
+                options: [
+                    "春天歌",
+                    "夏天歌",
+                    "秋天歌",
+                    "冬天歌"
+                ],
+                correct: 2,
+                hint: "喜鹊阿姨教小喜鹊唱秋天歌。"
+            },
+            {
+                question: "《沙滩上的童话》一文中，孩子们用沙子堆了什么？",
+                options: [
+                    "城堡",
+                    "房子",
+                    "山",
+                    "桥"
+                ],
+                correct: 0,
+                hint: "孩子们用沙子堆了一座城堡。"
+            },
+            {
+                question: "《小马过河》一文中，松鼠说河水怎么样？",
+                options: [
+                    "很深",
+                    "很浅",
+                    "很急",
+                    "很宽"
+                ],
+                correct: 0,
+                hint: "松鼠说河水很深，会淹死小马。"
+            },
+            {
+                question: "《画杨桃》一文中，老师让同学们换位置看杨桃是为了说明什么？",
+                options: [
+                    "杨桃很好吃",
+                    "角度不同看到的形状不同",
+                    "杨桃很漂亮",
+                    "杨桃很特别"
+                ],
+                correct: 1,
+                hint: "老师想让同学们明白从不同角度看事物，形状会不一样。"
+            },
+            {
+                question: "《找春天》一文中，春天最先在哪里出现？",
+                options: [
+                    "田野里",
+                    "小溪边",
+                    "公园里",
+                    "树上"
+                ],
+                correct: 1,
+                hint: "春天最先在小溪边出现，溪水开始解冻。"
+            },
+            {
+                question: "《雷锋叔叔，你在哪里》一文中，雷锋叔叔帮助老人时做了什么？",
+                options: [
+                    "给钱",
+                    "背老人过马路",
+                    "送食物",
+                    "讲故事"
+                ],
+                correct: 1,
+                hint: "雷锋叔叔主动背老人过马路。"
+            },
+            {
+                question: "《邓小平爷爷植树》一文中，邓小平爷爷种的是什么树？",
+                options: [
+                    "松树",
+                    "杨树",
+                    "柳树",
+                    "槐树"
+                ],
+                correct: 0,
+                hint: "邓小平爷爷种的是松树。"
+            },
+            {
+                question: "《小蝌蚪找妈妈》一文中，小蝌蚪最先遇到了谁？",
+                options: [
+                    "青蛙",
+                    "鸭子",
+                    "鱼",
+                    "乌龟"
+                ],
+                correct: 1,
+                hint: "小蝌蚪最先遇到了鸭子。"
+            },
+            {
+                question: "《我是一只小虫子》一文中，小虫子最喜欢什么天气？",
+                options: [
+                    "下雨天",
+                    "晴天",
+                    "阴天",
+                    "下雪天"
+                ],
+                correct: 1,
+                hint: "小虫子最喜欢晴天，可以晒太阳。"
+            },
+            {
+                question: "《枫树上的喜鹊》一文中，小喜鹊为什么要学唱歌？",
+                options: [
+                    "为了好玩",
+                    "为了吸引朋友",
+                    "为了找食物",
+                    "为了睡觉"
+                ],
+                correct: 1,
+                hint: "小喜鹊学唱歌是为了吸引朋友。"
+            },
+            {
+                question: "《沙滩上的童话》一文中，孩子们在沙滩上玩什么游戏？",
+                options: [
+                    "堆沙堡",
+                    "挖宝藏",
+                    "打仗游戏",
+                    "捉迷藏"
+                ],
+                correct: 2,
+                hint: "孩子们在沙滩上玩打仗的游戏。"
+            },
+            {
+                question: "《小马过河》一文中，小马最后是怎么过河的？",
+                options: [
+                    "直接趟过去",
+                    "绕道而行",
+                    "等水退了再过",
+                    "找别的动物帮忙"
+                ],
+                correct: 0,
+                hint: "小马最后决定自己试一试，发现河水既不像老牛说的那么浅，也不像松鼠说的那么深。"
+            },
+            {
+                question: "《画杨桃》一文中，老师为什么让同学们坐到'我'的位置上看杨桃？",
+                options: [
+                    "因为'我'画得最好",
+                    "因为角度不同看到的形状不同",
+                    "因为'我'的位置最舒服",
+                    "因为老师想惩罚其他同学"
+                ],
+                correct: 1,
+                hint: "老师想让同学们明白，从不同角度看事物，形状会不一样。"
+            },
+            {
+                question: "《要是你在野外迷了路》一文中，哪种方法不能帮助辨别方向？",
+                options: [
+                    "看太阳",
+                    "看大树",
+                    "看积雪",
+                    "看北极星"
+                ],
+                correct: 1,
+                hint: "课文中提到了太阳、积雪、北极星可以帮助辨别方向，但没有提到大树。"
+            },
+            {
+                question: "《小马过河》一文中，小马最后是怎么过河的？",
+                options: [
+                    "直接趟过去",
+                    "绕道而行",
+                    "等水退了再过",
+                    "找别的动物帮忙"
+                ],
+                correct: 0,
+                hint: "小马最后决定自己试一试，发现河水既不像老牛说的那么浅，也不像松鼠说的那么深。"
+            },
+            {
+                question: "《画杨桃》一文中，老师为什么让同学们坐到'我'的位置上看杨桃？",
+                options: [
+                    "因为'我'画得最好",
+                    "因为角度不同看到的形状不同",
+                    "因为'我'的位置最舒服",
+                    "因为老师想惩罚其他同学"
+                ],
+                correct: 1,
+                hint: "老师想让同学们明白，从不同角度看事物，形状会不一样。"
+            },
+            {
+                question: "《找春天》一文中，孩子们在田野里发现了什么春天的迹象？",
+                options: [
+                    " snow",
+                    "新长出的草",
+                    "落叶",
+                    "枯草"
+                ],
+                correct: 1,
+                hint: "孩子们在田野里发现了新长出的草，这是春天的迹象。"
+            },
+            {
+                question: "《雷锋叔叔，你在哪里》一文中，雷锋叔叔帮助迷路的孩子时做了什么？",
+                options: [
+                    "给钱",
+                    "送回家",
+                    "送食物",
+                    "讲故事"
+                ],
+                correct: 1,
+                hint: "雷锋叔叔主动送迷路的孩子回家。"
+            },
+            {
+                question: "《邓小平爷爷植树》一文中，邓小平爷爷为什么要植树？",
+                options: [
+                    "为了好看",
+                    "为了环保",
+                    "为了纪念",
+                    "为了遮阳"
+                ],
+                correct: 1,
+                hint: "邓小平爷爷植树是为了保护环境。"
+            },
+            {
+                question: "《小蝌蚪找妈妈》一文中，小蝌蚪最后变成了什么？",
+                options: [
+                    "青蛙",
+                    "鱼",
+                    "乌龟",
+                    "鸭子"
+                ],
+                correct: 0,
+                hint: "小蝌蚪最后变成了青蛙。"
+            },
+            {
+                question: "《我是一只小虫子》一文中，小虫子最害怕什么？",
+                options: [
+                    "下雨",
+                    "刮风",
+                    "打雷",
+                    "下雪"
+                ],
+                correct: 0,
+                hint: "小虫子最害怕下雨，因为会被淋湿。"
+            },
+            {
+                question: "《枫树上的喜鹊》一文中，喜鹊阿姨教小喜鹊什么歌？",
+                options: [
+                    "春天歌",
+                    "夏天歌",
+                    "秋天歌",
+                    "冬天歌"
+                ],
+                correct: 2,
+                hint: "喜鹊阿姨教小喜鹊唱秋天歌。"
+            },
+            {
+                question: "《沙滩上的童话》一文中，孩子们用沙子堆了什么？",
+                options: [
+                    "城堡",
+                    "房子",
+                    "山",
+                    "桥"
+                ],
+                correct: 0,
+                hint: "孩子们用沙子堆了一座城堡。"
+            },
+            {
+                question: "《小马过河》一文中，松鼠说河水怎么样？",
+                options: [
+                    "很深",
+                    "很浅",
+                    "很急",
+                    "很宽"
+                ],
+                correct: 1,
+                hint: "松鼠说河水很浅，可以轻松过去。"
+            }
+        ];
+        
+        // 游戏状态
+        let currentQuestion = 0;
+        let score = 0;
+        let coins = 100;
+        let answered = false;
+        let level = 1;
+        let xp = 0;
+        let xpToNextLevel = 100;
+        let streak = 0;
+        let timerInterval;
+        let timeLeft = 30;
+        let doubleXpActive = false;
+        let freezeTimerActive = false;
+        let doubleXpCount = 1;
+        let freezeTimerCount = 1;
+        let removeWrongCount = 1;
+        
+        // 头像解锁状态
+        const avatars = [
+            { id: 1, src: "https://img.icons8.com/color/96/000000/cute-monster.png", unlocked: true },
+            { id: 2, src: "https://img.icons8.com/color/96/000000/dragon.png", unlocked: false },
+            { id: 3, src: "https://img.icons8.com/color/96/000000/unicorn.png", unlocked: false },
+            { id: 4, src: "https://img.icons8.com/color/96/000000/robot.png", unlocked: false }
+        ];
+        
+        // DOM元素
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const coinsElement = document.getElementById('coins');
+        const progressFill = document.getElementById('progress-fill');
+        const hintBtn = document.getElementById('hint-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const hintModal = document.getElementById('hint-modal');
+        const hintText = document.getElementById('hint-text');
+        const closeHint = document.getElementById('close-hint');
+        const resultModal = document.getElementById('result-modal');
+        const resultIcon = document.getElementById('result-icon');
+        const resultTitle = document.getElementById('result-title');
+        const resultText = document.getElementById('result-text');
+        const coinsEarned = document.getElementById('coins-earned');
+        const xpEarned = document.getElementById('xp-earned');
+        const nextQuestionBtn = document.getElementById('next-question');
+        const celebrationContainer = document.getElementById('celebration-container');
+        const levelElement = document.getElementById('level');
+        const xpElement = document.getElementById('xp');
+        const questionNumber = document.getElementById('question-number');
+        const timerElement = document.getElementById('timer');
+        const streakContainer = document.getElementById('streak-container');
+        const streakCount = document.getElementById('streak-count');
+        const avatarElement = document.getElementById('avatar');
+        const levelUpModal = document.getElementById('level-up');
+        const newLevelText = document.getElementById('new-level');
+        const closeLevelUp = document.getElementById('close-level-up');
+        const dailyRewardModal = document.getElementById('daily-reward');
+        const claimRewardBtn = document.getElementById('claim-reward');
+        const doubleXpBtn = document.getElementById('double-xp');
+        const freezeTimerBtn = document.getElementById('freeze-timer');
+        const removeWrongBtn = document.getElementById('remove-wrong');
+        const doubleXpCountElement = document.getElementById('double-xp-count');
+        const freezeTimerCountElement = document.getElementById('freeze-timer-count');
+        const removeWrongCountElement = document.getElementById('remove-wrong-count');
+        
+        // 初始化游戏
+        function initGame() {
+            // 检查是否有每日奖励
+            checkDailyReward();
+            
+            loadQuestion();
+            updateCoins();
+            updateXp();
+            updateStreak();
+            updatePowerups();
+            
+            // 事件监听
+            hintBtn.addEventListener('click', showHint);
+            skipBtn.addEventListener('click', skipQuestion);
+            closeHint.addEventListener('click', () => hintModal.classList.add('hidden'));
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+            closeLevelUp.addEventListener('click', () => levelUpModal.classList.add('hidden'));
+            claimRewardBtn.addEventListener('click', claimDailyReward);
+            doubleXpBtn.addEventListener('click', activateDoubleXp);
+            freezeTimerBtn.addEventListener('click', activateFreezeTimer);
+            removeWrongBtn.addEventListener('click', activateRemoveWrong);
+            
+            // 点击头像可以切换
+            avatarElement.addEventListener('click', showAvatarSelection);
+            
+            // 开始计时器
+            startTimer();
+        }
+        
+        // 检查每日奖励
+        function checkDailyReward() {
+            const lastPlayed = localStorage.getItem('lastPlayed');
+            const today = new Date().toDateString();
+            
+            if (!lastPlayed || lastPlayed !== today) {
+                // 显示每日奖励
+                setTimeout(() => {
+                    dailyRewardModal.classList.remove('hidden');
+                }, 1000);
+                
+                // 更新连续登录天数
+                const streakDays = parseInt(localStorage.getItem('streakDays')) || 0;
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastPlayed === yesterday.toDateString()) {
+                    localStorage.setItem('streakDays', streakDays + 1);
+                } else if (!lastPlayed) {
+                    localStorage.setItem('streakDays', 1);
+                } else {
+                    localStorage.setItem('streakDays', 1);
+                }
+                
+                localStorage.setItem('lastPlayed', today);
+            }
+        }
+        
+        // 领取每日奖励
+        function claimDailyReward() {
+            const streakDays = parseInt(localStorage.getItem('streakDays')) || 1;
+            let reward = 20;
+            
+            if (streakDays >= 7) reward = 200;
+            else if (streakDays >= 5) reward = 100;
+            else if (streakDays >= 3) reward = 50;
+            
+            coins += reward;
+            updateCoins();
+            dailyRewardModal.classList.add('hidden');
+            
+            // 显示奖励获得提示
+            showToast(`获得每日奖励: ${reward}金币`);
+        }
+        
+        // 显示Toast提示
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-lg z-50 animate-bounce';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+        
+        // 加载问题
+        function loadQuestion() {
+            answered = false;
+            timeLeft = 30;
+            updateTimerDisplay();
+            
+            const question = questions[currentQuestion];
+            questionElement.textContent = question.question;
+            questionNumber.textContent = `问题 ${currentQuestion + 1}/${questions.length}`;
+            
+            optionsElement.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option bg-white p-4 rounded-lg text-center font-medium shadow-md hover:bg-gray-50';
+                optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener('click', selectOption);
+                optionsElement.appendChild(optionElement);
+            });
+            
+            // 更新进度条
+            progressFill.style.width = `${(currentQuestion / questions.length) * 100}%`;
+            
+            // 重置计时器
+            clearInterval(timerInterval);
+            startTimer();
+        }
+        
+        // 开始计时器
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                if (!freezeTimerActive) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timeUp();
+                    }
+                }
+            }, 1000);
+        }
+        
+        // 更新时间显示
+        function updateTimerDisplay() {
+            let displayTime = timeLeft;
+            let emoji = "⏱️";
+            
+            if (timeLeft <= 10) {
+                emoji = "🔥";
+                timerElement.className = "text-sm font-bold text-red-500";
+            } else if (timeLeft <= 20) {
+                emoji = "⌛";
+                timerElement.className = "text-sm font-bold text-yellow-500";
+            } else {
+                timerElement.className = "text-sm font-bold";
+            }
+            
+            timerElement.textContent = `${emoji} ${displayTime}秒`;
+        }
+        
+        // 时间到
+        function timeUp() {
+            if (answered) return;
+            answered = true;
+            
+            const correctIndex = questions[currentQuestion].correct;
+            const options = document.querySelectorAll('.option');
+            
+            // 标记正确的选项
+            options.forEach((option, index) => {
+                if (index === correctIndex) {
+                    option.classList.add('correct');
+                }
+                
+                // 禁用所有选项
+                option.style.pointerEvents = 'none';
+            });
+            
+            // 显示结果
+            resultIcon.className = 'fas fa-hourglass-end text-5xl mb-4 text-red-500';
+            resultTitle.textContent = '时间到!';
+            resultText.textContent = `正确答案: ${questions[currentQuestion].options[correctIndex]}`;
+            coinsEarned.textContent = '0';
+            xpEarned.textContent = '5';
+            resultModal.classList.remove('hidden');
+            
+            // 减少连续登录天数
+            streak = 0;
+            updateStreak();
+            
+            // 给予少量经验
+            addXp(5);
+        }
+        
+        // 选择选项
+        function selectOption(e) {
+            if (answered) return;
+            answered = true;
+            clearInterval(timerInterval);
+            
+            const selectedIndex = parseInt(e.target.dataset.index);
+            const correctIndex = questions[currentQuestion].correct;
+            const options = document.querySelectorAll('.option');
+            
+            // 标记正确和错误的选项
+            options.forEach((option, index) => {
+                if (index === correctIndex) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && index !== correctIndex) {
+                    option.classList.add('wrong');
+                }
+                
+                // 禁用所有选项
+                option.style.pointerEvents = 'none';
+            });
+            
+            // 检查答案
+            if (selectedIndex === correctIndex) {
+                score++;
+                
+                // 计算奖励
+                let coinsReward = 20 + Math.floor(timeLeft / 5);
+                let xpReward = 10 + Math.floor(timeLeft / 3);
+                
+                // 双倍经验
+                if (doubleXpActive) {
+                    xpReward *= 2;
+                    doubleXpActive = false;
+                }
+                
+                coins += coinsReward;
+                addXp(xpReward);
+                
+                // 更新连续登录天数
+                streak++;
+                updateStreak();
+                
+                // 显示结果
+                coinsEarned.textContent = coinsReward;
+                xpEarned.textContent = xpReward;
+                showResult(true);
+            } else {
+                coins = Math.max(0, coins - 10);
+                addXp(5);
+                
+                // 减少连续登录天数
+                streak = 0;
+                updateStreak();
+                
+                // 显示结果
+                coinsEarned.textContent = '-10';
+                xpEarned.textContent = '5';
+                showResult(false);
+            }
+            
+            updateCoins();
+        }
+        
+        // 显示结果
+        function showResult(isCorrect) {
+            if (isCorrect) {
+                resultIcon.className = 'fas fa-check-circle text-5xl mb-4 text-green-500';
+                resultTitle.textContent = '回答正确!';
+                resultText.textContent = '你太棒了!';
+                
+                // 庆祝动画
+                if (score % 3 === 0) {
+                    showCelebration();
+                }
+            } else {
+                resultIcon.className = 'fas fa-times-circle text-5xl mb-4 text-red-500';
+                resultTitle.textContent = '回答错误!';
+                resultText.textContent = `正确答案: ${questions[currentQuestion].options[questions[currentQuestion].correct]}`;
+            }
+            
+            resultModal.classList.remove('hidden');
+        }
+        
+        // 显示庆祝动画
+        function showCelebration() {
+            celebrationContainer.classList.remove('hidden');
+            celebrationContainer.innerHTML = '';
+            
+            // 创建50个彩色纸屑
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.animationDuration = 3 + Math.random() * 3 + 's';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                celebrationContainer.appendChild(confetti);
+            }
+            
+            setTimeout(() => {
+                celebrationContainer.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // 下一题
+        function nextQuestion() {
+            resultModal.classList.add('hidden');
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                // 游戏结束
+                questionElement.textContent = `游戏结束! 你的得分是 ${score}/${questions.length}`;
+                optionsElement.innerHTML = '';
+                hintBtn.style.display = 'none';
+                skipBtn.style.display = 'none';
+                clearInterval(timerInterval);
+                
+                // 显示最终得分和奖励
+                const finalCoins = score * 20;
+                const finalXp = score * 15;
+                coins += finalCoins;
+                addXp(finalXp);
+                
+                // 显示庆祝动画
+                showCelebration();
+                
+                // 添加重新开始按钮
+                const restartBtn = document.createElement('button');
+                restartBtn.className = 'bg-purple-600 text-white px-6 py-2 rounded-full mt-4';
+                restartBtn.textContent = '再来一次';
+                restartBtn.addEventListener('click', restartGame);
+                optionsElement.appendChild(restartBtn);
+                
+                // 根据得分给予道具奖励
+                if (score >= 8) {
+                    doubleXpCount += 2;
+                    freezeTimerCount += 1;
+                    removeWrongCount += 1;
+                    updatePowerups();
+                    showToast("完美表现! 获得额外道具奖励!");
+                } else if (score >= 5) {
+                    doubleXpCount += 1;
+                    updatePowerups();
+                    showToast("不错的表现! 获得额外道具奖励!");
+                }
+            }
+        }
+        
+        // 重新开始游戏
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            hintBtn.style.display = 'block';
+            skipBtn.style.display = 'block';
+            loadQuestion();
+        }
+        
+        // 显示提示
+        function showHint() {
+            if (coins < 20) {
+                showToast('金币不足!');
+                return;
+            }
+            
+            coins -= 20;
+            updateCoins();
+            hintText.textContent = questions[currentQuestion].hint;
+            hintText.classList.remove('hidden');
+        }
+        
+        // 跳过问题
+        function skipQuestion() {
+            if (coins < 30) {
+                showToast('金币不足!');
+                return;
+            }
+            
+            coins -= 30;
+            updateCoins();
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                nextQuestion();
+            }
+        }
+        
+        // 更新金币显示
+        function updateCoins() {
+            coinsElement.textContent = coins;
+        }
+        
+        // 更新经验值
+        function updateXp() {
+            levelElement.textContent = `等级: ${level}`;
+            xpElement.textContent = `经验: ${xp}/${xpToNextLevel}`;
+            
+            // 更新经验条
+            const xpPercentage = (xp / xpToNextLevel) * 100;
+            progressFill.style.width = `${xpPercentage}%`;
+        }
+        
+        // 增加经验值
+        function addXp(amount) {
+            xp += amount;
+            
+            // 检查是否升级
+            if (xp >= xpToNextLevel) {
+                level++;
+                xp -= xpToNextLevel;
+                xpToNextLevel = Math.floor(xpToNextLevel * 1.5);
+                
+                // 显示升级提示
+                newLevelText.textContent = `你现在是等级 ${level}!`;
+                levelUpModal.classList.remove('hidden');
+                
+                // 解锁新头像
+                if (level >= 3 && !avatars[1].unlocked) {
+                    avatars[1].unlocked = true;
+                    showToast("解锁新头像: 小龙!");
+                } else if (level >= 5 && !avatars[2].unlocked) {
+                    avatars[2].unlocked = true;
+                    showToast("解锁新头像: 独角兽!");
+                } else if (level >= 7 && !avatars[3].unlocked) {
+                    avatars[3].unlocked = true;
+                    showToast("解锁新头像: 机器人!");
+                }
+                
+                // 升级奖励
+                coins += level * 50;
+                updateCoins();
+            }
+            
+            updateXp();
+        }
+        
+        // 更新连续登录天数显示
+        function updateStreak() {
+            if (streak > 0) {
+                streakContainer.style.display = 'flex';
+                streakCount.textContent = streak;
+            } else {
+                streakContainer.style.display = 'none';
+            }
+        }
+        
+        // 显示头像选择
+        function showAvatarSelection() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            
+            const content = document.createElement('div');
+            content.className = 'bg-white p-6 rounded-lg max-w-sm w-full mx-4';
+            
+            const title = document.createElement('h3');
+            title.className = 'text-xl font-bold mb-4 text-purple-600';
+            title.textContent = '选择头像';
+            content.appendChild(title);
+            
+            const avatarContainer = document.createElement('div');
+            avatarContainer.className = 'flex justify-around flex-wrap';
+            
+            avatars.forEach(avatar => {
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'text-center mb-4';
+                
+                const img = document.createElement('img');
+                img.src = avatar.src;
+                img.className = 'avatar mb-2 cursor-pointer';
+                if (!avatar.unlocked) {
+                    img.style.filter = 'grayscale(100%)';
+                    img.style.opacity = '0.5';
+                }
+                
+                img.addEventListener('click', () => {
+                    if (avatar.unlocked) {
+                        avatarElement.src = avatar.src;
+                        modal.remove();
+                        showToast(`已切换到头像 ${avatar.id}`);
+                    } else {
+                        showToast(`等级 ${avatar.id * 2 + 1} 解锁`);
+                    }
+                });
+                
+                avatarDiv.appendChild(img);
+                
+                if (!avatar.unlocked) {
+                    const lock = document.createElement('div');
+                    lock.className = 'text-sm text-gray-500';
+                    lock.textContent = '等级 ' + (avatar.id * 2 + 1);
+                    avatarDiv.appendChild(lock);
+                }
+                
+                avatarContainer.appendChild(avatarDiv);
+            });
+            
+            content.appendChild(avatarContainer);
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'bg-gray-200 text-gray-800 px-4 py-2 rounded mt-4';
+            closeBtn.textContent = '关闭';
+            closeBtn.addEventListener('click', () => modal.remove());
+            content.appendChild(closeBtn);
+            
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        }
+        
+        // 更新道具数量显示
+        function updatePowerups() {
+            doubleXpCountElement.textContent = doubleXpCount;
+            freezeTimerCountElement.textContent = freezeTimerCount;
+            removeWrongCountElement.textContent = removeWrongCount;
+        }
+        
+        // 激活双倍经验
+        function activateDoubleXp() {
+            if (doubleXpCount <= 0) {
+                showToast('道具不足!');
+                return;
+            }
+            
+            doubleXpCount--;
+            doubleXpActive = true;
+            updatePowerups();
+            
+            showToast('双倍经验已激活!');
+            
+            // 30秒后失效
+            setTimeout(() => {
+                if (doubleXpActive) {
+                    doubleXpActive = false;
+                    showToast('双倍经验已结束');
+                }
+            }, 30000);
+        }
+        
+        // 激活冻结时间
+        function activateFreezeTimer() {
+            if (freezeTimerCount <= 0) {
+                showToast('道具不足!');
+                return;
+            }
+            
+            freezeTimerCount--;
+            freezeTimerActive = true;
+            updatePowerups();
+            
+            showToast('时间冻结10秒!');
+            
+            // 10秒后解冻
+            setTimeout(() => {
+                freezeTimerActive = false;
+                showToast('时间恢复流动');
+            }, 10000);
+        }
+        
+        // 激活移除错误答案
+        function activateRemoveWrong() {
+            if (removeWrongCount <= 0) {
+                showToast('道具不足!');
+                return;
+            }
+            
+            if (answered) {
+                showToast('问题已回答，无法使用');
+                return;
+            }
+            
+            removeWrongCount--;
+            updatePowerups();
+            
+            const correctIndex = questions[currentQuestion].correct;
+            const options = document.querySelectorAll('.option');
+            let removed = 0;
+            
+            options.forEach((option, index) => {
+                if (index !== correctIndex && removed < 2) {
+                    if (!option.classList.contains('wrong')) {
+                        option.style.visibility = 'hidden';
+                        option.style.pointerEvents = 'none';
+                        removed++;
+                    }
+                }
+            });
+            
+            showToast('已移除2个错误答案!');
+        }
+        
+        // 初始化游戏
+        window.onload = initGame;
+    </script>
+</body>
+</html>
